@@ -1,11 +1,12 @@
 #ifndef GRAPH_H
     #define GRAPH_H
     #include <stdbool.h>
+    #include <stdlib.h>
 
     typedef struct Graph GRAPH;
     GRAPH* MyGraph(int v);
     void add_edge(GRAPH* G,int v1, int v2, int peso); 
-    bool exist_edge(GRAPH* G, int v1, int v2);
+    int exist_edge(GRAPH* G, int v1, int v2);
     int* neighbors(GRAPH* G, int v);
     void remove_edge(GRAPH* G,int v1,int v2); 
     void print_info(GRAPH* G);
