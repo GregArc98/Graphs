@@ -11,15 +11,15 @@ GRAPH *MyGraph(int v)
     if (G != NULL)
     {
         G->v = v;
-        G->adj = (int **)malloc(sizeof(int *));
+        G->adj = (int **)malloc(v * (sizeof(int *)));
         if (G->adj != NULL)
         {
             for (int i = 0; i < v; i++)
             {
-                G->adj[i] = (int *)malloc(sizeof(int));
+                G->adj[i] = (int *)malloc(v * (sizeof(int)));
                 if (G->adj[i] != NULL)
                 {
-                    for (int j; j <= v; j++)
+                    for (int j = 0; j < v; j++)
                     {
                         G->adj[i][j] = -1;
                     }
@@ -39,8 +39,8 @@ void add_edge(GRAPH *G, int v1, int v2, int peso)
     {
         if (v1 <= G->v && v2 <= G->v && v1 > 0 && v2 > 0)
         {
-            G->adj[v1][v2] = peso;
-            G->adj[v2][v1] = peso;
+            G->adj[v1 - 1][v2 - 1] = peso;
+            G->adj[v2 - 1][v1 - 1] = peso;
         }
     }
     return;
@@ -50,11 +50,10 @@ int exist_edge(GRAPH *G, int v1, int v2)
 {
     if (G != NULL)
     {
-        if (G->adj[v1][v2] != -1 && G->adj[v2][v1] != -1)
+        if (G->adj[v1 - 1][v2 - 1] != -1 && G->adj[v2 - 1][v1 - 1] != -1)
         {
             return 1;
         }
-        return 0;
     }
     return 0;
 }
@@ -63,13 +62,12 @@ void remove_edge(GRAPH *G, int v1, int v2)
 {
     if (G != NULL)
     {
-        if (G->adj[v1][v2] != -1 && G->adj[v2][v1] != -1)
+        if (G->adj[v1 - 1][v2 - 1] != -1 && G->adj[v2 - 1][v1 - 1] != -1)
         {
             G->adj[v1][v2] = -1;
             G->adj[v2][v1] = -1;
             return;
         }
-        printf("-1\n");
     }
     printf("-1\n");
 }
@@ -80,13 +78,13 @@ void print_info(GRAPH *G)
     {
         printf("Vertices: %d\n", G->v);
         printf("Arestas:\n");
-        for (int i = 1; i <= G->v; i++)
+        for (int i = 0; i < G->v; i++)
         {
-            for (int j = i; j <= G->v; j++)
+            for (int j = 0; j < G->v; j++)
             {
                 if (G->adj[i][j] != -1)
                 {
-                    printf("(%d, %d) peso: %d\n", i, j, G->adj[i][j]);
+                    printf("(%d, %d) peso: %d\n", i + 1, j + 1, G->adj[i][j]);
                 }
             }
         }
@@ -115,4 +113,51 @@ void delete_graph(GRAPH **G)
         *G = NULL;
     }
     return;
+}
+
+int *neighbors(GRAPH *G, int v)
+{
+
+    if (G != NULL && G->adj != NULL)
+    {
+        int cont = 0;
+        for (int j = 0; j < G->v; j++)
+        {
+            if (exist_edge(G, v, j) == 1)
+            {
+                cont++;
+            }
+        }
+        int* arr = (int*) malloc (cont * sizeof(int));
+        cont = 0;
+        if (arr != NULL){
+            for (int j = 0; j < G->v; j++)
+        {
+            if (exist_edge(G, v, j) == 1)
+            {
+                arr[cont] = G->adj[v][j];
+                cont++;
+            }
+        }
+        return arr;
+        }
+        return NULL;
+    }
+    return NULL;
+}
+
+int **adjacency_matrix(GRAPH *G)
+{
+    if (G != NULL)
+    {
+        if (G->adj != NULL)
+        {
+            return G->adj;
+        }
+    }
+    return NULL;
+}
+
+int max_neighbors(GRAPH *G)
+{
 }
