@@ -12,7 +12,7 @@ struct Graph
 
 static int is_valid_vertex(const Graph *G, int v)
 {
-    return (v <= 0 || v > G->vertices);
+    return (v >= 1 && v <= G->vertices);
 }
 
 //
@@ -31,7 +31,7 @@ Graph *create_graph(int numVertices)
         return NULL;
 
     G->vertices = numVertices;
-    G->adjMtx = (int **)malloc(numVertices * (sizeof(int *)));
+    G->adjMtx = (int **)calloc(numVertices, sizeof(int *));
 
     if (G->adjMtx == NULL)
         return NULL;
