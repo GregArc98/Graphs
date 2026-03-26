@@ -4,8 +4,8 @@
 
 struct Graph
 {
-    int vertices; // numero de verticies
-    int **adjMtx; // matriz de adjacências
+    int vertices; // number of vertices
+    int **adjMtx; // adjacency matrix
 };
 
 // helper functions
