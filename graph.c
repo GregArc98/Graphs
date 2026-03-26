@@ -4,8 +4,8 @@
 
 struct Graph
 {
-    int vertices; // number of vertices
-    int **adjMtx; // adjacency matrix
+    int vertices; // numero de vertices
+    int **adjMtx; // matriz de adjacencia
 };
 
 // helper functions
@@ -18,10 +18,10 @@ static int is_valid_vertex(const Graph *G, int v)
 //
 
 /**
- * @brief    Dynamically allocates a new Graph struct based on an amount of vertices.
+ * @brief    Aloca dinamicamente um Grafo baseado em um número de vértices.
  *
- * @param    numVertices The amount of vertices that'll be created in the Graph.
- * @return   A pointer to the newly created Graph struct.
+ * @param    numVertices A quantidade de vértices que serão criados no Grafo.
+ * @return   Um ponteiro para o novo Grafo criado.
  */
 Graph *create_graph(int numVertices)
 {
@@ -51,10 +51,10 @@ Graph *create_graph(int numVertices)
 }
 
 /**
- * @brief   Frees the entire Graph, including its adjacent matrix.
+ * @brief   Libera a memória do Grafo, incluindo sua matriz de adjacência.
  *
- * @param   **G A pointer to a pointer of the Graph.
- * @return  GraphStatus: 0 for success, 1 for failure.
+ * @param   **G Um ponteiro para o ponteiro de um Grafo.
+ * @return  GraphStatus: 0 para sucesso, 1 para falha.
  */
 GraphStatus destroy_graph(Graph **G)
 {
@@ -74,12 +74,12 @@ GraphStatus destroy_graph(Graph **G)
 }
 
 /**
- * @brief   Adds an edge with a specific weight between two vertices of the Graph.
+ * @brief   Adiciona uma aresta com um peso específico entre dois vértices
  *
- * @param   *G A pointer to the Graph.
- * @param   v1 The first vertix.
- * @param   v2 The second vertix.
- * @param   weight The "value" (weight) of the edge.
+ * @param   *G Um ponteiro para o Grafo.
+ * @param   v1 O primeiro vértice.
+ * @param   v2 O segundo vértice.
+ * @param   weight O peso da aresta.
  * @return  GraphStatus: -1 or 1.
  */
 GraphStatus add_edge(Graph *G, int v1, int v2, int weight)
@@ -97,11 +97,11 @@ GraphStatus add_edge(Graph *G, int v1, int v2, int weight)
 }
 
 /**
- * @brief   Checks if an edge exists between two vertices of the Graph.
+ * @brief   Verifica se existe uma aresta entre dois vértices.
  *
- * @param   *G A pointer to the Graph.
- * @param   v1 The first vertix.
- * @param   v2 The second vertix.
+ * @param   *G Um ponteiro para o Grafo.
+ * @param   v1 O primeiro vértice.
+ * @param   v2 O segundo vértice.
  * @return  GraphStatus: -1, 0 or 1
  */
 GraphStatus exist_edge(const Graph *G, int v1, int v2)
@@ -117,13 +117,12 @@ GraphStatus exist_edge(const Graph *G, int v1, int v2)
     return GRAPH_SUCCESS;
 }
 
-// all other functions work using GraphStatus, it's required for this one to return -1 so I used GRAPH_ERROR for what was supposed to be GRAPH_FAILURE (third "if")
 /**
- * @brief   Removes an edge between two vertices, doesn't do it if it doesn't exist.
+ * @brief   Remove uma aresta entre dois vértices, não remove se não existir.
  *
- * @param   *G A pointer to the Graph.
- * @param   v1 The first vertix.
- * @param   v2 The second vertix.
+ * @param   *G Um ponteiro para o Grafo.
+ * @param   v1 O primeiro vértice.
+ * @param   v2 O segundo vértice.
  * @return  GraphStatus: -1 or 1
  */
 GraphStatus remove_edge(Graph *G, int v1, int v2)
@@ -135,7 +134,7 @@ GraphStatus remove_edge(Graph *G, int v1, int v2)
         return GRAPH_ERROR;
 
     if (G->adjMtx[v1 - 1][v2 - 1] == -1)
-        return GRAPH_ERROR;
+        return GRAPH_FAILURE;
 
     G->adjMtx[v1 - 1][v2 - 1] = -1;
     G->adjMtx[v2 - 1][v1 - 1] = -1;
@@ -144,12 +143,12 @@ GraphStatus remove_edge(Graph *G, int v1, int v2)
 }
 
 /**
- * @brief   Stores all the neighbors of a vertix "v" of the Graph in an array, returns a pointer to it.
+ * @brief   Armazena todos os vizinhos de um vértice em um array.
  *
- * @param   *G A pointer to the Graph.
- * @param   v The vertix that'll be checked for neighbors.
- * @param   *size Where the neighbors array's size will be stored.
- * @return  int*: A pointer to an array containing all neighbors, NULL if any errors occur.
+ * @param   *G Um ponteiro para o Grafo.
+ * @param   v O vértice do qual será verificado por vizinhos.
+ * @param   *size Onde o tamanho do array de vizinhos será armazenado.
+ * @return  int*: Um ponteiro para o array que armazena todos os vizinhos, NULL se algum erro ocorrer.
  */
 int *neighbors(const Graph *G, int v, int *size)
 {
@@ -178,10 +177,10 @@ int *neighbors(const Graph *G, int v, int *size)
 }
 
 /**
- * @brief   Returns the first vertix from the Graph that has the highest number of neighbors.
+ * @brief   Retorna o primeiro vértice do Grafo que tem o maior número de vizinhos.
  *
- * @param   *G A pointer to the Graph.
- * @return  int: The vertix's number.
+ * @param   *G Um ponteiro para o Grafo.
+ * @return  int: O vértice.
  */
 int max_neighbors(const Graph *G)
 {
@@ -213,12 +212,6 @@ int max_neighbors(const Graph *G)
     return max_idx + 1;
 }
 
-/**
- * @brief   Returns the Graph's adjacency matrix.
- *
- * @param   *G A pointer to the Graph.
- * @return  int**: The Graph's adjacency matrix, NULL if the Graph is NULL.
- */
 int **adjacency_matrix(const Graph *G)
 {
     if (G == NULL)
@@ -227,16 +220,18 @@ int **adjacency_matrix(const Graph *G)
     return G->adjMtx;
 }
 
-// essa funcao ta ruim
 /**
- * @brief   Prints info about the graph.
+ * @brief   Se o array passado for NULL, imprime informação sobre o Grafo, se não, imprime o array.
  *
  * @param   *G A pointer to the Graph.
+ * @param   *arr Um ponteiro para array de int
+ * @param   size O tamanho do array de int passado
  * @return  GraphStatus: 0 or 1.
  */
 GraphStatus print_info(const Graph *G, int *arr, int size)
 {
-    if (arr && size) {
+    if (arr && size)
+    {
         for (int i = 0; i < size; i++)
             printf("%d ", arr[i]);
 
@@ -264,10 +259,11 @@ GraphStatus print_info(const Graph *G, int *arr, int size)
         {
             if (j < i)
                 continue;
-                
+
             if (G->adjMtx[i][j] != -1)
             {
-                if (!first) {
+                if (!first)
+                {
                     printf(", ");
                 }
 
