@@ -258,9 +258,9 @@ GraphStatus print_info(const Graph *G, int *arr, int size)
 
     printf("E = [");
     int first = 1;
-    for (int i = 0; i < G->vertices; i++)
+    for (int j = 0; j < G->vertices; j++)
     {
-        for (int j = 0; j < G->vertices; j++)
+        for (int i = 0; i < G->vertices; i++)
         {
             if (j < i)
                 continue;
