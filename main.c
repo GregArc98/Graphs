@@ -5,7 +5,7 @@
 /*
 Aluno:  Luís Gustavo Vieira Antoniosi   | NºUSP: 17067476
 Aluno:  Luiz Filipe Sá Vioto            | NºUSP: 16886252
-Aluno:  Matheus Gregório                | NºUSP: 16892051
+Aluno:  Matheus Gregório Muniz Arcanjo  | NºUSP: 16892051
 Aluno:  Rafael Said Jannini             | NºUSP: 16898162
 */
 
