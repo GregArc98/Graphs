@@ -21,6 +21,6 @@ int max_neighbors(const Graph *G);
 
 int **adjacency_matrix(const Graph *G);
 
-GraphStatus print_info(const Graph *G);
+GraphStatus print_info(const Graph *G, int *arr, int size);
 
 #endif
