@@ -287,8 +287,8 @@ int main()
             break;
         case 4:
             scanf(" %d %d", &v1, &v2);
-            
-            if (remove_edge(graph, v1, v2) == GRAPH_FAILURE) {
+    
+            if (remove_edge(graph, v1, v2) == GRAPH_ERROR) {
                 answer = -1;
                 printStatus = false;
             }
