@@ -27,7 +27,7 @@ GraphStatus remove_edge(Graph *G, int v1, int v2);
 int *neighbors(const Graph *G, int v, int *size);
 int max_neighbors(const Graph *G);
 
-int **adjacency_matrix(const Graph *G);
+GraphStatus adjacency_matrix(const Graph *G);
 
 GraphStatus print_info(const Graph *G, int *arr, int size);
 
@@ -190,12 +190,51 @@ int max_neighbors(const Graph *G)
     return max_idx + 1;
 }
 
-int **adjacency_matrix(const Graph *G)
+GraphStatus adjacency_matrix(const Graph *G)
 {
     if (G == NULL)
-        return NULL;
+        return GRAPH_ERROR;
 
-    return G->adjMtx;
+    if(G->adjMtx == NULL)
+        return GRAPH_ERROR;
+
+    int linhaValida[G->vertices];
+    int colunaValida[G->vertices];
+    for (int i = 0; i < G->vertices; i++) {
+        linhaValida[i] = 0;
+        colunaValida[i] = 0;
+    }
+    for(int i = 0; i<G->vertices; i++){
+        for(int j = 0; j<G->vertices; j++){
+            if(G->adjMtx[i][j]!= -1){
+                linhaValida[i] = 1;
+                colunaValida[j] = 1;
+            }
+        }
+    }
+
+    printf("Adjacency Matrix: \n");
+    for(int i = 0; i<G->vertices; i++){
+        if(!linhaValida[i])
+            continue;
+        for(int j = 0; j<G->vertices; j++){
+            if(!colunaValida[j]) 
+                continue;
+            if(j == 0)
+                if(G->adjMtx[i][j] == -1)
+                    printf("%3d", 0);
+                else
+                    printf("%3d", G->adjMtx[i][j]);
+            else
+                if(G->adjMtx[i][j] == -1)
+                    printf("%4d", 0);
+                else
+                    printf("%4d", G->adjMtx[i][j]);
+        }
+        printf("\n");
+    }
+
+    return GRAPH_SUCCESS;
 }
 
 GraphStatus print_info(const Graph *G, int *arr, int size)
@@ -207,7 +246,6 @@ GraphStatus print_info(const Graph *G, int *arr, int size)
         printf("\n");
         return GRAPH_SUCCESS;
     }
-
     if (G == NULL)
         return GRAPH_ERROR;
 
@@ -255,7 +293,7 @@ int main()
     int option = 0;
     int numVertices = 0, v1 = 0, v2 = 0, weight = 0;
     int answer = 0;
-    bool printStatus = true;
+    bool printStatus = true, mtx = false;
     int *neighborsArr = NULL, size = 0;
 
     Graph *graph;
@@ -294,6 +332,10 @@ int main()
             }
 
             break;
+        case 5:
+            mtx = true;
+            printStatus = false;
+            break;
         default:
             printf("unrecognized option %d!\n", option);
         }
@@ -301,6 +343,8 @@ int main()
 
     if (printStatus)
         print_info(graph, neighborsArr, size);
+    else if(mtx)
+        adjacency_matrix(graph);
     else
         printf("%d\n", answer);
 
