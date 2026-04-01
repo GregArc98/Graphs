@@ -198,28 +198,9 @@ GraphStatus adjacency_matrix(const Graph *G)
     if(G->adjMtx == NULL)
         return GRAPH_ERROR;
 
-    int linhaValida[G->vertices];
-    int colunaValida[G->vertices];
-    for (int i = 0; i < G->vertices; i++) {
-        linhaValida[i] = 0;
-        colunaValida[i] = 0;
-    }
-    for(int i = 0; i<G->vertices; i++){
-        for(int j = 0; j<G->vertices; j++){
-            if(G->adjMtx[i][j]!= -1){
-                linhaValida[i] = 1;
-                colunaValida[j] = 1;
-            }
-        }
-    }
-
     printf("Adjacency Matrix: \n");
-    for(int i = 0; i<G->vertices; i++){
-        if(!linhaValida[i])
-            continue;
-        for(int j = 0; j<G->vertices; j++){
-            if(!colunaValida[j]) 
-                continue;
+    for(int i = 0; i < G->vertices; i++){
+        for(int j = 0; j < G->vertices; j++){
             if(j == 0)
                 if(G->adjMtx[i][j] == -1)
                     printf("%3d", 0);
@@ -293,10 +274,10 @@ int main()
     int option = 0;
     int numVertices = 0, v1 = 0, v2 = 0, weight = 0;
     int answer = 0;
-    bool printStatus = true, mtx = false;
+    bool printStatus = true, mtx = false, max = false;
     int *neighborsArr = NULL, size = 0;
 
-    Graph *graph;
+    Graph *graph = NULL;
 
     do
     {
@@ -336,6 +317,11 @@ int main()
             mtx = true;
             printStatus = false;
             break;
+        case 6:
+            answer = max_neighbors(graph);
+            max = true;
+            printStatus = false;
+            break;
         default:
             printf("unrecognized option %d!\n", option);
         }
@@ -343,8 +329,10 @@ int main()
 
     if (printStatus)
         print_info(graph, neighborsArr, size);
-    else if(mtx)
+    else if (mtx)
         adjacency_matrix(graph);
+    else if (max)
+        printf("max vertex: %d\n", answer);
     else
         printf("%d\n", answer);
 

@@ -212,12 +212,32 @@ int max_neighbors(const Graph *G)
     return max_idx + 1;
 }
 
-int **adjacency_matrix(const Graph *G)
+GraphStatus adjacency_matrix(const Graph *G)
 {
     if (G == NULL)
-        return NULL;
+        return GRAPH_ERROR;
 
-    return G->adjMtx;
+    if(G->adjMtx == NULL)
+        return GRAPH_ERROR;
+
+    printf("Adjacency Matrix: \n");
+    for(int i = 0; i < G->vertices; i++){
+        for(int j = 0; j < G->vertices; j++){
+            if(j == 0)
+                if(G->adjMtx[i][j] == -1)
+                    printf("%3d", 0);
+                else
+                    printf("%3d", G->adjMtx[i][j]);
+            else
+                if(G->adjMtx[i][j] == -1)
+                    printf("%4d", 0);
+                else
+                    printf("%4d", G->adjMtx[i][j]);
+        }
+        printf("\n");
+    }
+
+    return GRAPH_SUCCESS;
 }
 
 /**
