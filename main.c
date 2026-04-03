@@ -9,9 +9,11 @@ Aluno:  Matheus Gregório Muniz Arcanjo  | NºUSP: 16892051
 Aluno:  Rafael Said Jannini             | NºUSP: 16898162
 */
 
+
+//Diferentes status de saída
 typedef enum GraphStatus {
-    GRAPH_ERROR = -1,
-    GRAPH_SUCCESS = 0,
+    GRAPH_ERROR = -1,   
+    GRAPH_SUCCESS = 0,  
     GRAPH_FAILURE = 1
 } GraphStatus;
 
@@ -21,58 +23,61 @@ Graph *create_graph(int numVertices);
 GraphStatus destroy_graph(Graph **G);
 
 GraphStatus add_edge(Graph *G, int v1, int v2, int weight);
-GraphStatus exist_edge(const Graph *G, int v1, int v2);
+GraphStatus exist_edge(Graph *G, int v1, int v2);
 GraphStatus remove_edge(Graph *G, int v1, int v2);
 
-int *neighbors(const Graph *G, int v, int *size);
-int max_neighbors(const Graph *G);
+int *neighbors(Graph *G, int v, int *size);
+int max_neighbors(Graph *G);
 
-GraphStatus adjacency_matrix(const Graph *G);
+GraphStatus adjacency_matrix(Graph *G);
 
-GraphStatus print_info(const Graph *G, int *arr, int size);
+GraphStatus print_info(Graph *G, int *arr, int size);
 
 struct Graph
 {
-    int vertices; // number of vertices
-    int **adjMtx; // adjacency matrix
+    int vertices;   //Número de vértices
+    int **adjMtx;   //Matriz de adjacência
 };
 
-// helper functions
+//Função auxiliar para verificar se o vérice é válido
 
-static int is_valid_vertex(const Graph *G, int v)
+int is_valid_vertex(const Graph *G, int v)
 {
-    return (v >= 1 && v <= G->vertices);
+    return (v >= 1 && v <= G->vertices); //Precisa estar entre 1 e o número de vértices do grafo
 }
 
-//
+//Funções do Grafo
 
+//Função que cria um grafo
 Graph *create_graph(int numVertices)
 {
-    Graph *G = (Graph *)malloc(sizeof(Graph));
+    Graph *G = (Graph *)malloc(sizeof(Graph)); //Aloca memória para o grafo
 
     if (G == NULL)
-        return NULL;
+        return NULL; // Verificação do malloc
 
     G->vertices = numVertices;
-    G->adjMtx = (int **)calloc(numVertices, sizeof(int *));
+    G->adjMtx = (int **)calloc(numVertices, sizeof(int *)); //Aloca memória para a matriz
 
     if (G->adjMtx == NULL)
-        return NULL;
+        return NULL; //Verificação do malloc
 
+    //Instanciando a matriz de adjacência 
     for (int i = 0; i < numVertices; i++)
     {
-        G->adjMtx[i] = (int *)malloc(numVertices * (sizeof(int)));
+        G->adjMtx[i] = (int *)malloc(numVertices * (sizeof(int))); //Aloca memória para a linha da matriz
 
         if (G->adjMtx[i] == NULL)
-            return NULL;
+            return NULL;    //Verificação do malloc
 
         for (int j = 0; j < numVertices; j++)
-            G->adjMtx[i][j] = -1;
+            G->adjMtx[i][j] = -1;   //Inicializa tudo com -1
     }
 
     return G;
 }
 
+//Função que destrói o grafo
 GraphStatus destroy_graph(Graph **G)
 {
     if (!G || !(*G))
@@ -80,16 +85,17 @@ GraphStatus destroy_graph(Graph **G)
 
     for (int i = 0; i < (*G)->vertices; i++)
     {
-        free((*G)->adjMtx[i]);
+        free((*G)->adjMtx[i]); //Libera memória das linhas da matriz de adjacência
     }
 
-    free((*G)->adjMtx);
-    free(*G);
-    *G = NULL;
+    free((*G)->adjMtx); //Libera a matriz de adjacência
+    free(*G);   //Libera o grafo
+    *G = NULL;  //Seta como nulo o ponteiro por segurança
 
     return GRAPH_SUCCESS;
 }
 
+//Função que adiciona aresta
 GraphStatus add_edge(Graph *G, int v1, int v2, int weight)
 {
     if (G == NULL)
@@ -98,25 +104,29 @@ GraphStatus add_edge(Graph *G, int v1, int v2, int weight)
     if (!is_valid_vertex(G, v1) || !is_valid_vertex(G, v2))
         return GRAPH_ERROR;
 
+    //Adiciona o peso das arestas na matriz
     G->adjMtx[v1 - 1][v2 - 1] = weight;
-    G->adjMtx[v2 - 1][v1 - 1] = weight;
+    G->adjMtx[v2 - 1][v1 - 1] = weight; //Como é não direcionado, é necessário adicionar aresta (a,b) e (b,a)
 
     return GRAPH_SUCCESS;
 }
 
-GraphStatus exist_edge(const Graph *G, int v1, int v2)
+//Função que verifica se a aresta existe
+GraphStatus exist_edge(Graph *G, int v1, int v2)
 {
     if (G == NULL)
         return GRAPH_ERROR;
     if (!is_valid_vertex(G, v1) || !is_valid_vertex(G, v2))
         return GRAPH_ERROR;
 
+    //Caso o peso da aresta for -1 na matriz, significa que não existe
     if (G->adjMtx[v1 - 1][v2 - 1] == -1)
         return GRAPH_FAILURE;
 
     return GRAPH_SUCCESS;
 }
 
+//Função que remove aresta do grafo
 GraphStatus remove_edge(Graph *G, int v1, int v2)
 {
     if (G == NULL)
@@ -125,28 +135,33 @@ GraphStatus remove_edge(Graph *G, int v1, int v2)
     if (!is_valid_vertex(G, v1) || !is_valid_vertex(G, v2))
         return GRAPH_ERROR;
 
+    //Verificação extra, para ver se já está removido
     if (G->adjMtx[v1 - 1][v2 - 1] == -1)
         return GRAPH_ERROR;
 
+    //Coloca o peso como -1, significando que está removido
     G->adjMtx[v1 - 1][v2 - 1] = -1;
     G->adjMtx[v2 - 1][v1 - 1] = -1;
 
     return GRAPH_SUCCESS;
 }
 
-int *neighbors(const Graph *G, int v, int *size)
+//Função que retorna vetor de vizinhos de um vértice
+int *neighbors(Graph *G, int v, int *size)
 {
     if (!G)
         return NULL;
     if (!is_valid_vertex(G, v))
         return NULL;
 
-    int *adjacentVertices = (int *)calloc(G->vertices, sizeof(int));
+    //Aloca o vetor de vértices
+    int *adjacentVertices = (int *)malloc(G->vertices*sizeof(int));
     if (!adjacentVertices)
         return NULL;
 
     int tmpCount = 0;
 
+    //Coloca valores na matriz de acordo com o vértice especificado
     for (int j = 0; j < G->vertices; j++)
     {
         if (G->adjMtx[v - 1][j] != -1)
@@ -155,12 +170,14 @@ int *neighbors(const Graph *G, int v, int *size)
         }
     }
 
+    //Passando o tamanho do vetor por referência
     *size = tmpCount;
 
     return adjacentVertices;
 }
 
-int max_neighbors(const Graph *G)
+//Retorna o vértice com a maior quantidade de vizinhos
+int max_neighbors(Graph *G)
 {
     if (G == NULL || G->adjMtx == NULL)
         return 0;
@@ -169,19 +186,22 @@ int max_neighbors(const Graph *G)
     int max = 0;
     int max_idx = 0;
 
+    //Percorre a matriz inteira
     for (int i = 0; i < G->vertices; i++)
     {
 
         for (int j = 0; j < G->vertices; j++)
         {
+            //Se houver um vizinho, aumenta o contador
             if (G->adjMtx[i][j] != -1)
                 tmp++;
         }
 
+        //Troca do contador temporário com o maior número de vizinhos até o momento
         if (tmp > max)
         {
-            max = tmp;
-            max_idx = i;
+            max = tmp; //Salva o novo maior número de vizinhos
+            max_idx = i; //Salva o vérice com maior vizinhos
         }
 
         tmp = 0;
@@ -190,7 +210,8 @@ int max_neighbors(const Graph *G)
     return max_idx + 1;
 }
 
-GraphStatus adjacency_matrix(const Graph *G)
+//Função que printa a matriz de adjacência
+GraphStatus adjacency_matrix(Graph *G)
 {
     if (G == NULL)
         return GRAPH_ERROR;
@@ -218,8 +239,10 @@ GraphStatus adjacency_matrix(const Graph *G)
     return GRAPH_SUCCESS;
 }
 
-GraphStatus print_info(const Graph *G, int *arr, int size)
+//Função que printa a informação necessária 
+GraphStatus print_info(Graph *G, int *arr, int size)
 {
+    //Caso o vetor de vizinhos seja não nulo, imprime ele
     if (arr && size) {
         for (int i = 0; i < size; i++)
             printf("%d ", arr[i]);
@@ -230,6 +253,7 @@ GraphStatus print_info(const Graph *G, int *arr, int size)
     if (G == NULL)
         return GRAPH_ERROR;
 
+    //Caso o vetor de vizinhos seja nulo, imprime todos os vértices e as arestas
     printf("V = [");
     for (int i = 0; i < G->vertices; i++)
     {
